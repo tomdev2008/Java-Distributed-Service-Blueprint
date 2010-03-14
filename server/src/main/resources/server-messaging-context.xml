@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.3.0.xsd">
+
+  <context:annotation-config/>
+
+  <import resource="classpath:/shared-messaging-context.xml"/>
+
+  <!--
+  admin message topic sender
+  -->
+
+  <bean id="adminMessageSender" class="ca.codepit.server.AdminMessageSender">
+    <property name="template" ref="adminMessageJmsTemplate"/>
+    <property name="replyToDestination" ref="clientResponseQueue"/>
+  </bean>
+
+  <bean id="adminMessageJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <property name="connectionFactory">
+      <!-- lets wrap in a pool to avoid creating a connection per send -->
+      <bean class="org.springframework.jms.connection.SingleConnectionFactory">
+        <property name="targetConnectionFactory" ref="jmsFactory"/>
+      </bean>
+    </property>
+    <property name="defaultDestination" ref="clientAdminTopic"/>
+  </bean>
+
+  <!--
+  admin response message processing
+  =========================================================
+  -->
+  <bean id="serverMain" class="ca.codepit.server.ServerMain"/>
+
+  <bean id="adminMessageListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+    <property name="delegate" ref="serverMain"/>
+    <property name="defaultListenerMethod" value="receiveAdminMessage"/>
+  </bean>
+
+  <bean class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+    <property name="destination" ref="clientResponseQueue"/>
+    <property name="connectionFactory" ref="jmsFactory"/>
+    <property name="messageListener" ref="adminMessageListener"/>
+  </bean>
+
+
+  
+  <!--
+  work item queue sender
+  -->
+
+  <bean id="workItemSender" class="ca.codepit.server.WorkItemSender">
+    <property name="template" ref="workExecutionJmsTemplate"/>
+    <property name="replyToDestination" ref="workConfirmQueue"/>
+  </bean>
+
+  <bean id="workExecutionJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+    <property name="connectionFactory">
+      <!-- lets wrap in a pool to avoid creating a connection per send -->
+      <bean class="org.springframework.jms.connection.SingleConnectionFactory">
+        <property name="targetConnectionFactory" ref="jmsFactory"/>
+      </bean>
+    </property>
+    <property name="defaultDestination" ref="workRequestQueue"/>
+  </bean>
+
+  <!--
+  work item response message processing
+  =========================================================
+  -->
+
+  <bean id="workItemMessageListener" class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+    <property name="delegate" ref="serverMain"/>
+    <property name="defaultListenerMethod" value="receiveWorkConfirmMessage"/>
+  </bean>
+
+  <bean class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+    <property name="destination" ref="workConfirmQueue"/>
+    <property name="connectionFactory" ref="jmsFactory"/>
+    <property name="messageListener" ref="workItemMessageListener"/>
+  </bean>
+
+</beans>

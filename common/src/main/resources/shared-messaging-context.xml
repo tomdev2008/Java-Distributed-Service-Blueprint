@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.3.0.xsd">
+
+
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="ignoreResourceNotFound" value="true"/>
+    <property name="locations">
+      <list>
+        <value>classpath:/service.properties</value>
+      </list>
+    </property>
+    <!-- Override properties in file with system properties -->
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+  </bean>
+
+  <!--
+  Common jms configuration code
+  -->
+
+  <!-- JMS ConnectionFactory to use -->
+  <amq:connectionFactory id="jmsFactory" brokerURL="failover://(${server.address})?maxReconnectDelay=1000"/>
+
+  <!--
+  client administration topic
+  ===============================================================================================
+  -->
+  <amq:topic id="clientAdminTopic" physicalName="topic.client.admin"/>
+  <amq:queue id="clientResponseQueue" physicalName="queue.client.admin"/>
+
+
+  <!--
+  work item queue
+  ===============================================================================================
+  -->
+  <amq:queue id="workRequestQueue" physicalName="queue.work.request"/>
+  <amq:queue id="workConfirmQueue" physicalName="queue.work.confirm"/>
+
+
+</beans>
