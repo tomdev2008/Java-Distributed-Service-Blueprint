@@ -55,7 +55,7 @@ public class ServerMain {
       Thread.sleep(500);
       messageCount++;
       ws.send(new WorkItemMessage("msg: " + messageCount));
-      if(messageCount % 10 == 0) {
+      if(messageCount % 50 == 0) {
         ams.send(new AdministrationMessage("msg: " + messageCount, AdministrationMessage.ACTION.PING));
       }
       if(messageCount % 1000 == 0) {

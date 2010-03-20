@@ -41,6 +41,9 @@ public class WorkItemHandler {
     item.setProcessingNode(hostname);
 
     // ----------------------------------- SNIP -----------------------------------
+    //
+    // place your message processing code here
+    //
 
     int timeToProcess = random.nextInt(1000);
 
