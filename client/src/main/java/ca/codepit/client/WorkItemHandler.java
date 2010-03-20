@@ -2,6 +2,7 @@ package ca.codepit.client;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Random;
 
 import ca.codepit.common.WorkItemMessage;
 
@@ -24,6 +25,8 @@ public class WorkItemHandler {
 
   private String hostname;
 
+  private Random random = new Random();
+
   // Constructors ---------------------------------------------------------------------------------------- Constructors
 
   public WorkItemHandler() throws UnknownHostException {
@@ -37,7 +40,19 @@ public class WorkItemHandler {
 
     item.setProcessingNode(hostname);
 
-    log.info("processing: " + item);
+    // ----------------------------------- SNIP -----------------------------------
+
+    int timeToProcess = random.nextInt(1000);
+
+    log.info("pausing " + timeToProcess + " milliseconds to process " + item);
+
+    try {
+      Thread.sleep(timeToProcess);
+    } catch(InterruptedException e) {
+      log.error("failed to pause for message processing, message was: " + item, e);
+    }
+
+    // ----------------------------------- SNIP -----------------------------------
 
     return item;
   }
