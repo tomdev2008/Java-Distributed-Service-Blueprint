@@ -5,7 +5,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import ca.codepit.common.WorkItem;
+import ca.codepit.common.WorkItemMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +33,7 @@ public class WorkItemSender {
 
   // Public Methods ------------------------------------------------------------------------------------ Public Methods
 
-  public void send(final WorkItem item) {
+  public void send(final WorkItemMessage item) {
 
     log.debug("sending work item: " + item);
 

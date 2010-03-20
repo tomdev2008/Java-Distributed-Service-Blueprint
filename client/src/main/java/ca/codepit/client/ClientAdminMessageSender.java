@@ -1,11 +1,10 @@
-package ca.codepit.server;
+package ca.codepit.client;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import ca.codepit.common.ClientAdminMessage;
+import ca.codepit.common.AdministrationMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,37 +12,44 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 /**
+ * Class used to send client generated messages to the server.
+ *
  * @author Evan Jehu
  *         Date: Mar 13, 2010
  */
-public class AdminMessageSender {
+public class ClientAdminMessageSender {
 
   // Constants ---------------------------------------------------------------------------------------------- Constants
 
-  private transient static final Log log = LogFactory.getLog(AdminMessageSender.class);
+  private transient static final Log log = LogFactory.getLog(ClientAdminMessageSender.class);
 
   // Instance Variables ---------------------------------------------------------------------------- Instance Variables
 
+  /**
+   * Spring template used to abstract the creation and sending of JMS messages.
+   */
   private JmsTemplate template;
-
-  private Destination replyToDestination;
 
   // Constructors ---------------------------------------------------------------------------------------- Constructors
 
 
   // Public Methods ------------------------------------------------------------------------------------ Public Methods
 
-  public void send(final ClientAdminMessage msg) {
+  /**
+   * Send method for sending messages from the client to the server, this can be used to centralize exception logging
+   * etc.
+   *
+   * @param msg
+   */
+  public void send(final AdministrationMessage msg) {
 
-    log.debug("sending admin message: " + msg);
+    log.debug("sending message to admin server: " + msg);
 
     template.send(new MessageCreator() {
 
       public Message createMessage(Session session) throws JMSException {
 
-        Message message = session.createObjectMessage(msg);
-        message.setJMSReplyTo(replyToDestination);
-        return message;
+        return session.createObjectMessage(msg);
       }
     });
   }
@@ -55,11 +61,6 @@ public class AdminMessageSender {
 
 
   // Getters & Setters ------------------------------------------------------------------------------ Getters & Setters
-
-  public void setReplyToDestination(Destination replyToDestination) {
-
-    this.replyToDestination = replyToDestination;
-  }
 
   public void setTemplate(JmsTemplate template) {
 

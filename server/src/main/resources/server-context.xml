@@ -24,7 +24,7 @@
       <amq:queue physicalName="queue.work.request"/>
     </amq:destinations>
     <amq:transportConnectors>
-      <amq:transportConnector uri="${server.address}?wireFormat.maxInactivityDuration=0&amp;consumer.prefetchSize=1"/>
+      <amq:transportConnector uri="${server.address}?wireFormat.maxInactivityDuration=0"/>
     </amq:transportConnectors>
   </amq:broker>
 

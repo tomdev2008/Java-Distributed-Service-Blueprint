@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @author Evan Jehu
  *         Date: Mar 13, 2010
  */
-public class WorkItem implements Serializable {
+public class WorkItemMessage implements Serializable {
 
   // Constants ---------------------------------------------------------------------------------------------- Constants
 
@@ -20,7 +20,7 @@ public class WorkItem implements Serializable {
 
   // Constructors ---------------------------------------------------------------------------------------- Constructors
 
-  public WorkItem(String itemId) {
+  public WorkItemMessage(String itemId) {
 
     this.itemId = itemId;
   }
@@ -30,7 +30,7 @@ public class WorkItem implements Serializable {
   @Override
   public String toString() {
 
-    return "WorkItem{" +
+    return "WorkItemMessage{" +
         "itemId='" + itemId + '\'' +
         ", processingNode='" + processingNode + '\'' +
         '}';

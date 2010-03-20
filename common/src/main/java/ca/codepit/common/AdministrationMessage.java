@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @author Evan Jehu
  *         Date: Mar 13, 2010
  */
-public class ClientAdminMessage implements Serializable {
+public class AdministrationMessage implements Serializable {
 
   // Constants ---------------------------------------------------------------------------------------------- Constants
 
@@ -30,12 +30,12 @@ public class ClientAdminMessage implements Serializable {
 
   // Constructors ---------------------------------------------------------------------------------------- Constructors
 
-  public ClientAdminMessage(String messageId, ACTION action) {
+  public AdministrationMessage(String messageId, ACTION action) {
 
     this(messageId, action, null);
   }
 
-  public ClientAdminMessage(String messageId, ACTION action, Serializable payload) {
+  public AdministrationMessage(String messageId, ACTION action, Serializable payload) {
 
     this.messageId = messageId;
     this.action = action;
@@ -51,7 +51,7 @@ public class ClientAdminMessage implements Serializable {
 
   @Override
   public String toString() {
-    return "ClientAdminMessage{" +
+    return "AdministrationMessage{" +
         "messageId='" + messageId + '\'' +
         ", targetClient='" + targetClient + '\'' +
         ", respondingClient='" + respondingClient + '\'' +

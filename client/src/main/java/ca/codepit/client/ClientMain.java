@@ -3,7 +3,7 @@ package ca.codepit.client;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import ca.codepit.common.ClientAdminMessage;
+import ca.codepit.common.AdministrationMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +35,7 @@ public class ClientMain {
   private String host;
 
   @Autowired
-  private ClientToAdminMessageSender cams;
+  private ClientAdminMessageSender cams;
 
   // Constructors ---------------------------------------------------------------------------------------- Constructors
 
@@ -45,7 +45,7 @@ public class ClientMain {
       host = InetAddress.getLocalHost().getHostName();
     } catch(UnknownHostException e) {
       host = "unknown";
-      e.printStackTrace();
+      log.error("failed to set client hostname defaulting to 'unknown'", e);
     }
   }
 
@@ -58,7 +58,7 @@ public class ClientMain {
    * @return the message is returned to the master server, if it was actioned successfully its success flag will be
    *          set to true.
    */
-  public ClientAdminMessage processAdminMessage(ClientAdminMessage msg) {
+  public AdministrationMessage processAdminMessage(AdministrationMessage msg) {
 
     // always set the responding client asap
     msg.setRespondingClient(host);
@@ -70,11 +70,11 @@ public class ClientMain {
           // do nothing, just reply
           break;
         case EXIT:
-          log.info("\t\t --- EXIT ---");
+          log.fatal("\t\t --- EXIT ---");
           ctx.close();
           break;
         default:
-          return new ClientAdminMessage(msg.getMessageId(), ClientAdminMessage.ACTION.CLIENT_ERROR, "Unrecognized client command");
+          return new AdministrationMessage(msg.getMessageId(), AdministrationMessage.ACTION.CLIENT_ERROR, "Unrecognized client command");
       }
       msg.setSuccess(true);
     }
@@ -92,7 +92,7 @@ public class ClientMain {
 
   public static void main(String[] args) throws InterruptedException {
 
-    // open/read the application context file
+    // open/read the application context file and start the client
     ctx = new ClassPathXmlApplicationContext("client-context.xml");
   }
 

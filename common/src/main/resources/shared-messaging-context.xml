@@ -23,10 +23,20 @@
   -->
 
   <!-- JMS ConnectionFactory to use -->
-  <amq:connectionFactory id="jmsFactory" brokerURL="failover://(${server.address})?maxReconnectDelay=1000"/>
+  <amq:connectionFactory id="jmsFactory" brokerURL="failover://(${server.address})?maxReconnectDelay=1000">
+    <amq:prefetchPolicy>
+      <!--
+      configure the number of messages a client should fetch at one time, if the time to process a message
+      varies greatly a lower number may balance load more efficiently, the default value here is 1,000
+      -->
+      <amq:prefetchPolicy queuePrefetch="1" topicPrefetch="1"/>
+    </amq:prefetchPolicy>
+  </amq:connectionFactory>
 
   <!--
-  client administration topic
+  define the client administration channels:
+  the first is a topic to broadcast administration messages to all running clients
+  the second is a response queue to handle client replies
   ===============================================================================================
   -->
   <amq:topic id="clientAdminTopic" physicalName="topic.client.admin"/>
@@ -34,7 +44,8 @@
 
 
   <!--
-  work item queue
+  define the two work item queues:
+  one for outgoing messages the other for confirmation messages
   ===============================================================================================
   -->
   <amq:queue id="workRequestQueue" physicalName="queue.work.request"/>

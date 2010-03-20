@@ -15,7 +15,7 @@
   admin message topic sender
   -->
 
-  <bean id="adminMessageSender" class="ca.codepit.server.AdminMessageSender">
+  <bean id="adminMessageSender" class="ca.codepit.server.ServerAdminMessageSender">
     <property name="template" ref="adminMessageJmsTemplate"/>
     <property name="replyToDestination" ref="clientResponseQueue"/>
   </bean>

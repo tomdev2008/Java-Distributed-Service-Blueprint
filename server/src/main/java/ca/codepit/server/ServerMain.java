@@ -1,8 +1,10 @@
 package ca.codepit.server;
 
-import ca.codepit.common.ClientAdminMessage;
-import ca.codepit.common.WorkItem;
+import ca.codepit.common.AdministrationMessage;
+import ca.codepit.common.WorkItemMessage;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -14,6 +16,8 @@ public class ServerMain {
 
   // Constants ---------------------------------------------------------------------------------------------- Constants
 
+  private transient static final Log log = LogFactory.getLog(ServerMain.class);
+
   private static ClassPathXmlApplicationContext ctx;
 
   // Instance Variables ---------------------------------------------------------------------------- Instance Variables
@@ -22,7 +26,7 @@ public class ServerMain {
   private WorkItemSender ws;
 
   @Autowired
-  private AdminMessageSender ams;
+  private ServerAdminMessageSender ams;
 
   // Constructors ---------------------------------------------------------------------------------------- Constructors
 
@@ -31,31 +35,31 @@ public class ServerMain {
 
   // Public Methods ------------------------------------------------------------------------------------ Public Methods
 
-  public void receiveAdminMessage(ClientAdminMessage msg) {
+  public void receiveAdminMessage(AdministrationMessage msg) {
 
-    System.out.println("admin response received: " + msg);
+    log.info("admin response received: " + msg);
   }
 
-  public void receiveWorkConfirmMessage(WorkItem msg) {
+  public void receiveWorkConfirmMessage(WorkItemMessage msg) {
 
-    System.out.println("work item confirmation received: " + msg);
+    log.info("work item confirmation received: " + msg);
   }
 
   public void run() throws InterruptedException {
 
-    System.out.println("starting server ...");
+    log.info("starting server ...");
 
     int messageCount = 0;
 
     while(true) {
       Thread.sleep(500);
       messageCount++;
-      ws.send(new WorkItem("msg: " + messageCount));
+      ws.send(new WorkItemMessage("msg: " + messageCount));
       if(messageCount % 10 == 0) {
-        ams.send(new ClientAdminMessage("msg: " + messageCount, ClientAdminMessage.ACTION.PING));
+        ams.send(new AdministrationMessage("msg: " + messageCount, AdministrationMessage.ACTION.PING));
       }
-      if(messageCount % 25 == 0) {
-        ams.send(new ClientAdminMessage("msg: " + messageCount, ClientAdminMessage.ACTION.EXIT));
+      if(messageCount % 1000 == 0) {
+        ams.send(new AdministrationMessage("msg: " + messageCount, AdministrationMessage.ACTION.EXIT));
       }
     }
   }

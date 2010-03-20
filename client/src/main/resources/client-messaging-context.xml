@@ -29,7 +29,7 @@
   <!--
   work item queue sender
   -->
-  <bean id="workItemSender" class="ca.codepit.client.ClientToAdminMessageSender">
+  <bean id="workItemSender" class="ca.codepit.client.ClientAdminMessageSender">
     <property name="template" ref="workExecutionJmsTemplate"/>
   </bean>
 
